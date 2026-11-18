@@ -10,6 +10,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.11/dist/lenis.min.js" defer></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.3.11/dist/lenis.css" />
 <style>
 :root{
   --db-cyan:#0D9E94;
@@ -32,9 +34,8 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:auto}
-@media (prefers-reduced-motion: no-preference){
-  html{scroll-behavior:smooth}
-}
+html.lenis,html.lenis body{height:auto}
+html.lenis.lenis-smooth{scroll-behavior:auto!important}
 body{
   font-family:var(--font-ui);
   color:var(--db-ink);
@@ -177,9 +178,8 @@ ul{list-style:none}
 }
 .hero-sticky{
   position:relative;height:100vh;overflow:hidden;
-  perspective:1600px;transform-style:preserve-3d;
 }
-.no-gsap .hero-pin{height:380vh}
+.no-gsap .hero-pin{height:220vh}
 .no-gsap .hero-sticky{position:sticky;top:0}
 .hero-stage{
   position:absolute;inset:0;
@@ -191,18 +191,16 @@ ul{list-style:none}
 .hero-frame{
   position:absolute;inset:0;
   display:grid;place-items:center;
-  transform-style:preserve-3d;
   pointer-events:none;
 }
 .hero-frame-inner{
   width:76%;height:84%;
   border-radius:28px;
   transform-origin:center center;
-  transform-style:preserve-3d;
-  will-change:transform,border-radius,clip-path,filter,width,height;
+  will-change:transform;
   box-shadow:0 40px 80px rgba(26,23,20,.18);
   overflow:hidden;
-  clip-path:inset(0% 0% 0% 0% round 28px);
+  contain:layout paint;
 }
 .hero-image-wrap{
   position:absolute;inset:0;
@@ -216,76 +214,81 @@ ul{list-style:none}
 .hero-image-overlay{
   position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(26,23,20,.12),rgba(26,23,20,.28) 55%,rgba(26,23,20,.5));
-  mix-blend-mode:multiply;opacity:.38;pointer-events:none;
-  transition:opacity .2s linear;
+  opacity:.38;pointer-events:none;
 }
 .hero-veil{
   position:absolute;inset:0;z-index:2;pointer-events:none;
   background:
-    radial-gradient(circle at 50% 45%,transparent 18%,rgba(246,240,230,.55) 72%),
-    linear-gradient(180deg,rgba(246,240,230,.35),transparent 30%,transparent 70%,rgba(246,240,230,.45));
-  opacity:1;will-change:opacity;
+    radial-gradient(circle at 50% 42%,transparent 22%,rgba(26,23,20,.18) 78%),
+    linear-gradient(180deg,rgba(246,240,230,.22),transparent 28%,transparent 62%,rgba(246,240,230,.28));
+  opacity:1;
 }
 .hero-rings{
   position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);
   width:min(68vw,720px);height:min(68vw,720px);pointer-events:none;z-index:3;
-  will-change:transform,opacity;
 }
 .hero-rings span{
   position:absolute;inset:0;border-radius:50%;
   border:1px solid rgba(13,158,148,.18);
-  animation:ringFloat 8s ease-in-out infinite;
 }
-.hero-rings span:nth-child(2){inset:8%;animation-delay:-2s;border-color:rgba(13,158,148,.14)}
-.hero-rings span:nth-child(3){inset:16%;animation-delay:-4s;border-color:rgba(196,160,74,.2)}
+.hero-rings span:nth-child(2){inset:8%;border-color:rgba(13,158,148,.14)}
+.hero-rings span:nth-child(3){inset:16%;border-color:rgba(196,160,74,.2)}
 .hero-rings i{
   position:absolute;width:8px;height:8px;border-radius:50%;background:var(--db-cyan);
   top:8%;left:50%;transform:translateX(-50%);
   box-shadow:0 0 18px var(--db-cyan-glow);
 }
-@keyframes ringFloat{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
 
 .hero-content{
   position:absolute;inset:0;display:grid;place-items:center;align-content:center;
   padding:calc(var(--nav-h) + 1rem) 1.5rem 2rem;text-align:center;z-index:5;
   pointer-events:none;
 }
+.hero-content::before{
+  content:'';position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);
+  width:min(920px,92vw);height:min(420px,58vh);border-radius:50%;
+  background:radial-gradient(circle,rgba(255,252,248,.55) 0%,rgba(255,252,248,.18) 45%,transparent 72%);
+  pointer-events:none;z-index:0;
+}
+.hero-content > *{position:relative;z-index:1}
 .hero-eyebrow{
   font-size:.72rem;letter-spacing:.32em;text-transform:uppercase;color:var(--db-cyan);
-  margin-bottom:1rem;font-weight:500;will-change:transform,opacity,filter;
+  margin-bottom:1rem;font-weight:600;
+  text-shadow:0 1px 12px rgba(255,252,248,.8),0 2px 18px rgba(26,23,20,.25);
 }
 .hero-title{
   display:flex;justify-content:center;gap:clamp(.02em,.6vw,.14em);
   font-family:var(--font-display);font-weight:600;line-height:.88;
   font-size:clamp(4.5rem,18vw,13rem);letter-spacing:-.02em;
-  color:transparent;perspective:900px;
+  color:transparent;
+  filter:drop-shadow(0 8px 28px rgba(26,23,20,.35));
 }
 .hero-title .letter{
-  display:inline-block;will-change:transform,opacity,filter;
-  background:url('https://admin.storebox.ai/media/9a385b2e-551f-4417-b51e-cd4bded8be5b/579f05da-eff4-4acf-b1dd-e844c03226a2/hero-dubai-skyline.jpg') center/cover;
+  display:inline-block;will-change:transform,opacity;
+  background:linear-gradient(165deg,#f6e7b8 0%,var(--db-gold) 38%,#8a6a28 72%,#e8d59a 100%);
   -webkit-background-clip:text;background-clip:text;
   color:transparent;
-  text-shadow:0 2px 24px rgba(26,23,20,.18);
-  filter:contrast(1.08);
   transform-origin:center bottom;
 }
 .hero-brand-row{
-  display:flex;align-items:center;justify-content:center;gap:1rem;margin-top:.45rem;
-  will-change:transform,opacity,filter;
+  display:flex;align-items:center;justify-content:center;gap:1rem;margin-top:.55rem;
 }
 .hero-booker{
-  font-size:clamp(.9rem,2.2vw,1.35rem);letter-spacing:.55em;text-transform:uppercase;font-weight:500;color:var(--db-ink);
+  font-size:clamp(.95rem,2.2vw,1.4rem);letter-spacing:.55em;text-transform:uppercase;font-weight:600;
+  color:#fff;text-shadow:0 2px 16px rgba(26,23,20,.55),0 0 1px rgba(26,23,20,.8);
 }
 .hero-vip{
   display:inline-flex;align-items:center;justify-content:center;
-  padding:.25rem .7rem;border:1px solid var(--db-gold);border-radius:999px;
-  font-size:.62rem;letter-spacing:.28em;color:var(--db-gold);font-weight:600;
+  padding:.3rem .75rem;border:1px solid var(--db-gold);border-radius:999px;
+  font-size:.62rem;letter-spacing:.28em;color:#1A1714;font-weight:700;
+  background:linear-gradient(135deg,var(--db-gold-soft),var(--db-gold));
+  box-shadow:0 8px 22px rgba(26,23,20,.28);
 }
 .hero-sub{
-  max-width:34rem;margin:1.35rem auto 0;
-  font-family:var(--font-display);font-size:clamp(1rem,2vw,1.25rem);
-  color:var(--text-muted);font-weight:400;font-style:italic;
-  will-change:transform,opacity,filter;
+  max-width:34rem;margin:1.2rem auto 0;
+  font-family:var(--font-display);font-size:clamp(1.05rem,2vw,1.3rem);
+  color:#fff;font-weight:500;font-style:italic;
+  text-shadow:0 2px 18px rgba(26,23,20,.65),0 1px 2px rgba(26,23,20,.5);
 }
 .hero-float-nav{
   position:absolute;inset:0;pointer-events:none;z-index:6;
@@ -294,8 +297,8 @@ ul{list-style:none}
   position:absolute;font-size:clamp(.7rem,1.2vw,.85rem);letter-spacing:.35em;text-transform:uppercase;
   color:rgba(255,252,248,.95);opacity:0;
   padding:.6rem 1.05rem;border:1px solid rgba(255,252,248,.4);border-radius:999px;
-  backdrop-filter:blur(10px);background:rgba(26,23,20,.22);
-  will-change:transform,opacity;box-shadow:0 10px 30px rgba(26,23,20,.12);
+  background:rgba(26,23,20,.45);
+  box-shadow:0 10px 30px rgba(26,23,20,.12);
 }
 .hero-float-nav .fn-stay{top:20%;left:10%}
 .hero-float-nav .fn-drive{top:26%;right:9%}
@@ -307,14 +310,12 @@ ul{list-style:none}
   z-index:7;opacity:0;pointer-events:none;
   font-size:.68rem;letter-spacing:.34em;text-transform:uppercase;color:#fff;
   text-shadow:0 8px 24px rgba(0,0,0,.35);
-  will-change:transform,opacity;
 }
 
 .scroll-indicator{
   position:absolute;bottom:1.6rem;left:50%;transform:translateX(-50%);z-index:8;
   display:flex;flex-direction:column;align-items:center;gap:.55rem;
   color:var(--text-muted);font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;
-  will-change:opacity,transform;
 }
 .scroll-indicator .mouse{
   width:22px;height:34px;border:1px solid rgba(26,23,20,.28);border-radius:12px;position:relative;
@@ -325,11 +326,6 @@ ul{list-style:none}
   animation:scrollWheel 1.6s ease-in-out infinite;
 }
 @keyframes scrollWheel{0%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(10px)}}
-@keyframes heroFloat{
-  0%,100%{transform:translate3d(0,0,0) scale(1.08)}
-  50%{transform:translate3d(0,-10px,0) scale(1.1)}
-}
-.hero-image-wrap img.is-floating{animation:heroFloat 7s ease-in-out infinite}
 
 /* Sections common */
 .section{position:relative;padding:clamp(4rem,10vh,7rem) clamp(1.1rem,4vw,4rem)}
@@ -833,13 +829,20 @@ ul{list-style:none}
   mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent);
 }
 .marquee-track{
-  display:flex;gap:2.5rem;width:max-content;
-  animation:marquee 28s linear infinite;
+  display:flex;width:max-content;
+  animation:marquee 32s linear infinite;
+  will-change:transform;
   font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:rgba(246,240,230,.55);
 }
-.marquee-track span{white-space:nowrap}
-.marquee-track b{color:var(--db-gold);font-weight:500}
-@keyframes marquee{to{transform:translateX(-50%)}}
+.marquee-group{
+  display:flex;align-items:center;gap:2.5rem;padding-right:2.5rem;flex-shrink:0;
+}
+.marquee-group span{white-space:nowrap}
+.marquee-group b{color:var(--db-gold);font-weight:500}
+@keyframes marquee{
+  from{transform:translate3d(0,0,0)}
+  to{transform:translate3d(-50%,0,0)}
+}
 
 .contact-grid{
   display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(2rem,5vw,4rem);
@@ -1313,7 +1316,7 @@ body:not(.has-gsap) .step-card.is-lit .copy{opacity:1}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
   html{scroll-behavior:auto}
-  .marquee-track{animation:none}
+  .marquee-track{animation:none!important;transform:none}
   .steps-float,.steps-svg{display:none}
   .step-card .copy{opacity:1;transform:none}
   .step-card .orb::after{animation:none}
@@ -1348,7 +1351,7 @@ body:not(.has-gsap) .step-card.is-lit .copy{opacity:1}
   .site-nav{justify-content:space-between}
   .hero-frame-inner{width:88%;height:76%;border-radius:22px}
   .hero-float-nav,.hero-exit-label{display:none}
-  .no-gsap .hero-pin{height:240vh}
+  .no-gsap .hero-pin{height:160vh}
   .fleet-pin,.no-gsap .fleet-pin{height:auto}
   .fleet-sticky,.no-gsap .fleet-sticky{height:auto;overflow:visible}
   .fleet-ui{position:relative;padding:5rem 1.2rem 1rem;display:block}
@@ -1447,7 +1450,7 @@ body:not(.has-gsap) .step-card.is-lit .copy{opacity:1}
         <div class="hero-frame" id="heroFrame">
           <div class="hero-frame-inner" id="heroFrameInner">
             <div class="hero-image-wrap" id="heroImageWrap">
-              <img id="heroImage" class="is-floating" src="https://admin.storebox.ai/media/9a385b2e-551f-4417-b51e-cd4bded8be5b/579f05da-eff4-4acf-b1dd-e844c03226a2/hero-dubai-skyline.jpg" alt="Dubai skyline" fetchpriority="high" />
+              <img id="heroImage" src="https://admin.storebox.ai/media/9a385b2e-551f-4417-b51e-cd4bded8be5b/579f05da-eff4-4acf-b1dd-e844c03226a2/hero-dubai-skyline.jpg" alt="Dubai skyline" fetchpriority="high" decoding="async" />
               <div class="hero-image-overlay" id="heroOverlay"></div>
             </div>
             <div class="hero-veil" id="heroVeil"></div>
@@ -2170,10 +2173,22 @@ body:not(.has-gsap) .step-card.is-lit .copy{opacity:1}
     <div class="footer-dubai" id="footerDubai">DUBAI</div>
     <div class="marquee" aria-hidden="true">
       <div class="marquee-track">
-        <span>Stay <b>·</b></span><span>Drive <b>·</b></span><span>Sail <b>·</b></span><span>Fly <b>·</b></span>
-        <span>DubaiBooker VIP <b>·</b></span><span>Epitome of Luxury <b>·</b></span>
-        <span>Stay <b>·</b></span><span>Drive <b>·</b></span><span>Sail <b>·</b></span><span>Fly <b>·</b></span>
-        <span>DubaiBooker VIP <b>·</b></span><span>Epitome of Luxury <b>·</b></span>
+        <div class="marquee-group">
+          <span>DubaiBooker VIP <b>·</b></span>
+          <span>Epitome of Luxury <b>·</b></span>
+          <span>Stay <b>·</b></span>
+          <span>Drive <b>·</b></span>
+          <span>Sail <b>·</b></span>
+          <span>Fly <b>·</b></span>
+        </div>
+        <div class="marquee-group">
+          <span>DubaiBooker VIP <b>·</b></span>
+          <span>Epitome of Luxury <b>·</b></span>
+          <span>Stay <b>·</b></span>
+          <span>Drive <b>·</b></span>
+          <span>Sail <b>·</b></span>
+          <span>Fly <b>·</b></span>
+        </div>
       </div>
     </div>
     <div class="footer-image" id="footerImage">
@@ -2662,12 +2677,58 @@ body:not(.has-gsap) .step-card.is-lit .copy{opacity:1}
     });
   });
 
-  /* ========== GSAP / FALLBACK ANIMATIONS ========== */
+  /* ========== LENIS + GSAP / FALLBACK ========== */
+  let lenis = null;
+
+  function initLenis() {
+    if (reduceMotion || typeof Lenis === 'undefined') return null;
+    const instance = new Lenis({
+      // Softer inertia through the pinned hero scrub
+      duration: 1.45,
+      easing: (t) => 1 - Math.pow(1 - t, 3),
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+      smoothWheel: true,
+      wheelMultiplier: 0.72,
+      touchMultiplier: 1.05,
+      syncTouch: false,
+      infinite: false,
+      autoRaf: false
+    });
+
+    instance.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => {
+      instance.raf(time * 1000);
+    });
+    gsap.ticker.lagSmoothing(0);
+
+    // Smooth in-page anchors (keeps hero pin scrub in sync)
+    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+      anchor.addEventListener('click', (e) => {
+        const id = anchor.getAttribute('href');
+        if (!id || id === '#' || id === '#top') {
+          e.preventDefault();
+          instance.scrollTo(0, { offset: 0, duration: 1.5, easing: (t) => 1 - Math.pow(1 - t, 3) });
+          return;
+        }
+        const target = document.querySelector(id);
+        if (!target) return;
+        e.preventDefault();
+        instance.scrollTo(target, { offset: 0, duration: 1.55, easing: (t) => 1 - Math.pow(1 - t, 3) });
+      });
+    });
+
+    lenis = instance;
+    return instance;
+  }
+
   function initMotion() {
     const hasGSAP = typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
     if (hasGSAP && !reduceMotion) {
       gsap.registerPlugin(ScrollTrigger);
+      initLenis();
       initGSAP();
+      ScrollTrigger.refresh();
     } else {
       document.body.classList.add('no-gsap');
       armCssReveals();
@@ -3281,124 +3342,108 @@ body:not(.has-gsap) .step-card.is-lit .copy{opacity:1}
 
     initScrollIns();
 
-    gsap.set(floats, { opacity: 0, scale: 0.72, y: 24 });
-    gsap.set(exitLabel, { opacity: 0, y: 24 });
+    gsap.set(floats, { opacity: 0, scale: 0.88, y: 18, force3D: true });
+    gsap.set(exitLabel, { opacity: 0, y: 18, force3D: true });
     gsap.set(letters, { transformOrigin: '50% 80%', force3D: true });
     gsap.set(inner, {
       width: '76%',
       height: '84%',
       borderRadius: 28,
       scale: 1,
-      rotateX: 0,
-      filter: 'brightness(1) saturate(1)',
-      clipPath: 'inset(0% 0% 0% 0% round 28px)'
+      force3D: true
     });
-    gsap.set(img, { scale: 1.08, xPercent: 0, yPercent: 0, transformOrigin: '50% 45%' });
+    gsap.set(img, { scale: 1.08, yPercent: 0, transformOrigin: '50% 45%', force3D: true });
+
+    const syncHeroEnquiry = (progress) => {
+      const enq = document.getElementById('heroEnquiry');
+      const tog = document.getElementById('heroEnquiryToggle');
+      if (!tog) return;
+      if (progress > 0.52) {
+        enq?.classList.remove('is-on');
+        tog.classList.add('is-hidden');
+      } else if (!enq?.classList.contains('is-on')) {
+        tog.classList.remove('is-hidden');
+      }
+    };
 
     mm.add('(min-width: 821px) and (prefers-reduced-motion: no-preference)', () => {
+      let lastGate = -1;
       const heroTl = gsap.timeline({
-        defaults: { ease: 'none' },
+        defaults: { ease: 'none', force3D: true },
         scrollTrigger: {
           trigger: '#hero',
           start: 'top top',
-          end: () => '+=' + Math.round(window.innerHeight * 2.8),
-          scrub: 0.4,
+          end: () => '+=' + Math.round(window.innerHeight * 1.55),
+          scrub: 0.85,
           pin: '.hero-sticky',
           anticipatePin: 1,
+          fastScrollEnd: true,
           invalidateOnRefresh: true,
           onUpdate: (self) => {
-            document.documentElement.style.setProperty('--hero-progress', self.progress);
-            img.classList.toggle('is-floating', self.progress < 0.03);
-            const enq = document.getElementById('heroEnquiry');
-            const tog = document.getElementById('heroEnquiryToggle');
-            if (self.progress > 0.55) {
-              enq?.classList.remove('is-on');
-              tog?.classList.add('is-hidden');
-            } else if (tog && !enq?.classList.contains('is-on')) {
-              tog.classList.remove('is-hidden');
+            const gate = self.progress > 0.52 ? 1 : 0;
+            if (gate !== lastGate) {
+              lastGate = gate;
+              syncHeroEnquiry(self.progress);
             }
           },
           onRefresh: (self) => {
-            const enq = document.getElementById('heroEnquiry');
-            const tog = document.getElementById('heroEnquiryToggle');
-            if (self.progress <= 0.55 && tog && !enq?.classList.contains('is-on')) {
-              tog.classList.remove('is-hidden');
-            }
+            lastGate = self.progress > 0.52 ? 1 : 0;
+            syncHeroEnquiry(self.progress);
           }
         }
       });
 
+      // Continuous cinematic arc — longer overlaps = smoother Lenis scrub
       heroTl
-        // Phase 1 — approach
-        .to(inner, { width: '86%', height: '90%', scale: 1.03, rotateX: 4, borderRadius: 18, duration: 0.2 }, 0)
-        .to(img, { scale: 1.2, yPercent: -5, duration: 0.2 }, 0)
-        .to(veil, { opacity: 0.45, duration: 0.16 }, 0)
-        .to('#scrollHint', { opacity: 0, y: 20, duration: 0.1 }, 0.02)
+        // 0 → approach
+        .to(inner, { width: '88%', height: '92%', borderRadius: 18, duration: 0.28 }, 0)
+        .to(img, { scale: 1.16, yPercent: -3.5, duration: 0.28 }, 0)
+        .to(veil, { opacity: 0.5, duration: 0.24 }, 0)
+        .to('#scrollHint', { opacity: 0, y: 14, duration: 0.14 }, 0.04)
 
-        // Phase 2 — copy dissolves, letters fracture
+        // copy fades while frame keeps opening
         .to(['#heroEyebrow', '#heroBrand', '#heroSub'], {
-          opacity: 0, filter: 'blur(12px)', y: -40, stagger: 0.025, duration: 0.18
-        }, 0.12)
-        .to('#heroRings', { opacity: 0, scale: 1.22, duration: 0.2 }, 0.13)
+          opacity: 0, y: -24, stagger: 0.03, duration: 0.22
+        }, 0.16)
+        .to('#heroRings', { opacity: 0, scale: 1.1, duration: 0.24 }, 0.16)
         .to(letters, {
-          x: (i) => (i - 2) * 48,
-          y: (i) => (i % 2 === 0 ? -32 : 38),
-          rotateZ: (i) => (i - 2) * 5,
-          rotateY: (i) => (i - 2) * -12,
-          scale: 0.94,
-          duration: 0.24
-        }, 0.15)
-
-        // Phase 3 — full-bleed expansion + letter explosion
-        .to(inner, {
-          width: '100%', height: '100%', borderRadius: 0, scale: 1.08, rotateX: 7, duration: 0.32
-        }, 0.28)
-        .to(img, { scale: 1.4, yPercent: -9, xPercent: 1.2, duration: 0.4 }, 0.28)
-        .to(veil, { opacity: 0, duration: 0.2 }, 0.3)
-        .to(overlay, { opacity: 0.58, duration: 0.26 }, 0.3)
-        .to(letters, {
-          x: (i) => (i - 2) * Math.min(220, window.innerWidth * 0.15),
-          y: (i) => (i % 2 === 0 ? -Math.min(160, window.innerHeight * 0.16) : Math.min(180, window.innerHeight * 0.18)),
-          rotateZ: (i) => (i - 2) * 16,
-          rotateY: (i) => (i - 2) * -30,
-          scale: 1.3,
-          opacity: 0,
-          filter: 'blur(16px)',
-          duration: 0.34
-        }, 0.33)
-
-        // Phase 4 — floating markers
-        .to(floats, { opacity: 1, scale: 1, y: 0, stagger: 0.035, duration: 0.2 }, 0.48)
-        .to(floats, {
-          y: (i) => (i % 2 === 0 ? -20 : 18),
-          x: (i) => (i < 2 ? -10 : 10),
-          duration: 0.26
-        }, 0.6)
-
-        // Phase 5 — mask reveal into Stay
-        .to(inner, {
-          scale: 1.22,
-          rotateX: 0,
-          filter: 'brightness(0.78) saturate(1.1)',
-          duration: 0.26
-        }, 0.7)
-        .fromTo(inner, {
-          clipPath: 'inset(16% 22% 22% 22% round 56px)'
-        }, {
-          clipPath: 'inset(0% 0% 0% 0% round 0px)',
+          x: (i) => (i - 2) * 28,
+          y: (i) => (i % 2 === 0 ? -18 : 22),
+          rotateZ: (i) => (i - 2) * 3,
           duration: 0.28
-        }, 0.7)
-        .to(img, { scale: 1.55, yPercent: -13, duration: 0.28 }, 0.7)
-        .to(floats, {
-          opacity: 0, scale: 0.88, y: -46, filter: 'blur(8px)', stagger: 0.025, duration: 0.16
-        }, 0.8)
-        .to(exitLabel, { opacity: 1, y: 0, duration: 0.14 }, 0.76)
-        .to(exitLabel, { opacity: 0, y: -28, duration: 0.12 }, 0.9)
+        }, 0.18)
+
+        // full bleed
         .to(inner, {
-          scale: 1.42,
-          filter: 'brightness(0.6) saturate(1.14)',
-          duration: 0.16
-        }, 0.88);
+          width: '100%', height: '100%', borderRadius: 0, duration: 0.36
+        }, 0.34)
+        .to(img, { scale: 1.3, yPercent: -7, duration: 0.4 }, 0.34)
+        .to(veil, { opacity: 0, duration: 0.24 }, 0.36)
+        .to(overlay, { opacity: 0.52, duration: 0.3 }, 0.36)
+        .to(letters, {
+          x: (i) => (i - 2) * 110,
+          y: (i) => (i % 2 === 0 ? -80 : 90),
+          rotateZ: (i) => (i - 2) * 9,
+          opacity: 0,
+          duration: 0.36
+        }, 0.4)
+
+        // markers drift in / out
+        .to(floats, { opacity: 1, scale: 1, y: 0, stagger: 0.04, duration: 0.22 }, 0.52)
+        .to(floats, {
+          y: (i) => (i % 2 === 0 ? -14 : 12),
+          duration: 0.28
+        }, 0.64)
+
+        // settle toward Stay
+        .to(img, { scale: 1.4, yPercent: -10, duration: 0.3 }, 0.74)
+        .to(overlay, { opacity: 0.7, duration: 0.3 }, 0.74)
+        .to(floats, {
+          opacity: 0, y: -26, stagger: 0.03, duration: 0.18
+        }, 0.84)
+        .to(exitLabel, { opacity: 1, y: 0, duration: 0.16 }, 0.8)
+        .to(exitLabel, { opacity: 0, y: -18, duration: 0.14 }, 0.92)
+        .to(overlay, { opacity: 0.8, duration: 0.14 }, 0.92);
 
       return () => {
         heroTl.scrollTrigger && heroTl.scrollTrigger.kill();
@@ -3409,30 +3454,30 @@ body:not(.has-gsap) .step-card.is-lit .copy{opacity:1}
     mm.add('(max-width: 820px) and (prefers-reduced-motion: no-preference)', () => {
       gsap.set(inner, { width: '88%', height: '76%', borderRadius: 22 });
       const mobileTl = gsap.timeline({
-        defaults: { ease: 'none' },
+        defaults: { ease: 'none', force3D: true },
         scrollTrigger: {
           trigger: '#hero',
           start: 'top top',
-          end: () => '+=' + Math.round(window.innerHeight * 1.6),
-          scrub: 0.45,
+          end: () => '+=' + Math.round(window.innerHeight * 1.05),
+          scrub: 0.75,
           pin: '.hero-sticky',
-          anticipatePin: 1
+          anticipatePin: 1,
+          fastScrollEnd: true
         }
       });
       mobileTl
-        .to(inner, { width: '100%', height: '100%', borderRadius: 0, scale: 1.06, duration: 0.55 }, 0)
-        .to(img, { scale: 1.32, yPercent: -6, duration: 0.65 }, 0)
+        .to(inner, { width: '100%', height: '100%', borderRadius: 0, duration: 0.6 }, 0)
+        .to(img, { scale: 1.26, yPercent: -5, duration: 0.65 }, 0)
         .to(['#heroEyebrow', '#heroBrand', '#heroSub', '#scrollHint', '#heroRings', '#heroVeil'], {
-          opacity: 0, duration: 0.3
-        }, 0.08)
+          opacity: 0, duration: 0.32
+        }, 0.1)
         .to(letters, {
-          x: (i) => (i - 2) * 34,
-          y: (i) => (i % 2 ? 42 : -42),
-          opacity: 0.15,
-          filter: 'blur(7px)',
+          x: (i) => (i - 2) * 26,
+          y: (i) => (i % 2 ? 28 : -28),
+          opacity: 0,
           duration: 0.4
-        }, 0.12)
-        .to(inner, { scale: 1.2, filter: 'brightness(0.72)', duration: 0.28 }, 0.7);
+        }, 0.14)
+        .to(overlay, { opacity: 0.72, duration: 0.3 }, 0.72);
       return () => {
         mobileTl.scrollTrigger && mobileTl.scrollTrigger.kill();
         mobileTl.kill();
@@ -3481,6 +3526,7 @@ body:not(.has-gsap) .step-card.is-lit .copy{opacity:1}
     const inner = document.getElementById('heroFrameInner');
     const img = document.getElementById('heroImage');
     const veil = document.getElementById('heroVeil');
+    const overlay = document.getElementById('heroOverlay');
     const letters = [...document.querySelectorAll('#heroTitle .letter')];
     const floats = [...document.querySelectorAll('#heroFloatNav span')];
     const exitLabel = document.getElementById('heroExitLabel');
@@ -3490,8 +3536,18 @@ body:not(.has-gsap) .step-card.is-lit .copy{opacity:1}
     const lerp = (a, b, t) => a + (b - a) * t;
     const clamp01 = (v) => Math.min(1, Math.max(0, v));
     const range = (p, a, b) => clamp01((p - a) / ((b - a) || 1));
+    let ticking = false;
 
     function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
+        updateHeroNative();
+      });
+    }
+
+    function updateHeroNative() {
       if (!reduceMotion && inner) {
         const rect = hero.getBoundingClientRect();
         const total = hero.offsetHeight - innerHeight;
@@ -3501,28 +3557,22 @@ body:not(.has-gsap) .step-card.is-lit .copy{opacity:1}
         const markers = range(p, 0.45, 0.62) * (1 - range(p, 0.78, 0.92));
         const finale = range(p, 0.7, 1);
 
-        const w = lerp(76, 100, expand);
-        const h = lerp(84, 100, expand);
-        const radius = lerp(28, 0, expand);
-        const scale = lerp(1, 1.08, expand) + finale * 0.34;
-        inner.style.width = w + '%';
-        inner.style.height = h + '%';
-        inner.style.borderRadius = radius + 'px';
-        inner.style.transform = `scale(${scale}) rotateX(${lerp(0, 7, expand) * (1 - finale)}deg)`;
-        inner.style.filter = `brightness(${lerp(1, 0.6, finale)})`;
-        inner.style.clipPath = finale > 0
-          ? `inset(${lerp(16, 0, finale)}% ${lerp(22, 0, finale)}% ${lerp(22, 0, finale)}% ${lerp(22, 0, finale)}%)`
-          : `inset(0% 0% 0% 0% round ${radius}px)`;
+        inner.style.width = lerp(76, 100, expand) + '%';
+        inner.style.height = lerp(84, 100, expand) + '%';
+        inner.style.borderRadius = lerp(28, 0, expand) + 'px';
+        inner.style.transform = 'translateZ(0)';
+        inner.style.filter = '';
+        inner.style.clipPath = '';
 
-        img.style.transform = `scale(${lerp(1.08, 1.55, Math.max(expand, finale))}) translate3d(${finale * 1.2}%, ${lerp(0, -13, Math.max(expand, finale))}%, 0)`;
-        img.classList.toggle('is-floating', p < 0.05);
+        img.style.transform = `translate3d(0, ${lerp(0, -10, Math.max(expand, finale))}%, 0) scale(${lerp(1.08, 1.4, Math.max(expand, finale))})`;
         if (veil) veil.style.opacity = String(lerp(1, 0, range(p, 0.05, 0.4)));
+        if (overlay) overlay.style.opacity = String(lerp(0.38, 0.78, finale));
 
         letters.forEach((l, i) => {
           const o = i - 2;
-          l.style.transform = `translate3d(${o * split * Math.min(220, innerWidth * 0.14)}px, ${(i % 2 ? 1 : -1) * split * Math.min(160, innerHeight * 0.16)}px, 0) rotate(${o * split * 14}deg) scale(${lerp(1, 1.25, split)})`;
+          l.style.transform = `translate3d(${o * split * 90}px, ${(i % 2 ? 1 : -1) * split * 70}px, 0) rotate(${o * split * 8}deg)`;
           l.style.opacity = String(1 - split);
-          l.style.filter = `blur(${split * 14}px)`;
+          l.style.filter = '';
         });
 
         const fadeCopy = range(p, 0.08, 0.32);
@@ -3530,23 +3580,22 @@ body:not(.has-gsap) .step-card.is-lit .copy{opacity:1}
           const el = document.getElementById(id);
           if (el) {
             el.style.opacity = String(1 - fadeCopy);
-            el.style.filter = `blur(${fadeCopy * 10}px)`;
-            el.style.transform = `translateY(${-fadeCopy * 28}px)`;
+            el.style.filter = '';
+            el.style.transform = `translateY(${-fadeCopy * 22}px)`;
           }
         });
 
         floats.forEach((f, i) => {
           f.style.opacity = String(markers);
-          f.style.transform = `translate(${(i < 2 ? -1 : 1) * markers * 10}px, ${(i % 2 ? 1 : -1) * markers * 16}px) scale(${0.85 + markers * 0.15})`;
+          f.style.transform = `translate(0, ${(i % 2 ? 1 : -1) * markers * 12}px) scale(${0.9 + markers * 0.1})`;
         });
         if (exitLabel) {
           const showExit = range(p, 0.76, 0.86) * (1 - range(p, 0.9, 0.98));
           exitLabel.style.opacity = String(showExit);
-          exitLabel.style.transform = `translateX(-50%) translateY(${(1 - showExit) * 20}px)`;
+          exitLabel.style.transform = `translateX(-50%) translateY(${(1 - showExit) * 16}px)`;
         }
       }
 
-      // Without GSAP, transport stays as stacked/static cards (CSS handles layout)
       if (word && pin) {
         const p = Math.min(1, Math.max(0, -pin.getBoundingClientRect().top / (pin.offsetHeight || 1)));
         word.textContent = p > 0.66 ? 'SKY' : p > 0.38 ? 'SEA' : 'LAND';
@@ -3559,8 +3608,14 @@ body:not(.has-gsap) .step-card.is-lit .copy{opacity:1}
   let motionReady = false;
   function bootMotion() {
     if (motionReady) return;
-    if (typeof gsap === 'undefined') {
+    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
       setTimeout(bootMotion, 80);
+      return;
+    }
+    // Lenis is optional — proceed if missing after a short wait window
+    if (typeof Lenis === 'undefined' && !bootMotion._lenisWaited) {
+      bootMotion._lenisWaited = true;
+      setTimeout(bootMotion, 120);
       return;
     }
     motionReady = true;
